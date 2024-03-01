@@ -1,0 +1,19 @@
+{
+  "machine": "1234567",
+  "sensors": [{
+      "sensor_name": "sensor1"
+    },
+    {
+      "sensor_name": "sensor2"
+    },
+    {
+      "sensor_name": "sensor3"
+    },
+    {
+      "sensor_name": "sensor4"
+    },
+    {
+      "sensor_name": "sensor8"
+    }
+  ]
+}

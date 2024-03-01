@@ -1,17 +1,17 @@
-from pyspark.sql import SparkSession
-import random
-import time
-from typing import Iterator, Any
 import pandas as pd
 from pyspark.sql import SparkSession, functions
-from pyspark.sql.streaming.state import GroupState
-from pyspark.sql import SparkSession
-from pyspark.sql.functions import *
-from pyspark.sql.types import *
-from pyspark.sql.window import Window
+#from pyspark.sql.streaming.state import GroupState
+#from state_source import GroupState
 from datetime import datetime, timedelta
 from file_reader_info import FileReaderInfo
 from type_converter import TypeConverter
+
+
+# Get info from json file 
+json_file = FileReaderInfo("machine.json")
+machine_name = json_file.get_machine_name()
+sensors_list = json_file.get_sensors_list()
+sensors_count = json_file.get_sensors_number()
 
 
 def get_highest_sensor_values(key, dataframe, state):
@@ -54,11 +54,12 @@ def get_highest_sensor_values(key, dataframe, state):
                     idx = df.groupby('sensor')['value'].idxmax()
                     df_batch = df.loc[idx]
                     # init df
+                       
                     timestamp = df.at[0, 'timestamp']
                     init_state = pd.DataFrame({
-                        'timestamp': [timestamp for _ in range(4)],
-                        'sensor': ['sensor1', 'sensor2', 'sensor3', 'sensor4'],
-                        'value': [0, 0, 0, 0]
+                        'timestamp': [timestamp for _ in range(sensors_count)],
+                        'sensor': sensors_list,
+                        'value': [0] * sensors_count
                     })
                     print("-------------------------------------------")
                     print("State: ")

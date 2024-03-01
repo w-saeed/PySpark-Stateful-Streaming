@@ -4,7 +4,6 @@ import time
 from typing import Iterator, Any
 import pandas as pd
 from pyspark.sql import SparkSession, functions
-from pyspark.sql.streaming.state import GroupState
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import *
 from pyspark.sql.types import *
@@ -35,7 +34,6 @@ initial_list = [
 ]
 state_structure = initial_list * sensors_count
 
-
 def select_name(index):
     return sensors_list[index]
 # Register the UDF
@@ -52,7 +50,7 @@ stream_df = spark \
     .withColumn("machine_name", lit(machine_name)) \
     .withColumn("timestamp", current_timestamp()) \
     .withColumn("sensor", expr("select_name_udf(names_index)")) \
-    .withColumn("value", (rand() * 1000).cast("integer")) \
+    .withColumn("value", (rand() * 1000 + 1).cast("integer")) \
     .drop("names_index") \
     .drop("id") \
 
@@ -73,5 +71,7 @@ stream= stream_df \
     timeoutConf="ProcessingTimeTimeout"
 )
 
-write_query = stream.writeStream.outputMode("update").format("console").option("checkpointLocation", "checkpoint").option("truncate", False).start()
+write_query = stream.writeStream.outputMode("update").format("console").trigger(processingTime = '500 milliseconds').option("truncate", False).start()
+#.option("checkpointLocation", "checkpoint")
+
 write_query.awaitTermination()
