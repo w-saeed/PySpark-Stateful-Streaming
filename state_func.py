@@ -8,7 +8,7 @@ from type_converter import TypeConverter
 
 
 # Get info from json file 
-json_file = FileReaderInfo("machine.json")
+json_file = FileReaderInfo("config.json")
 machine_name = json_file.get_machine_name()
 sensors_list = json_file.get_sensors_list()
 sensors_count = json_file.get_sensors_number()
